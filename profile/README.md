@@ -92,7 +92,7 @@ from openai import OpenAI
 
 # Zero code refactoring: just update base_url
 client = OpenAI(
-    base_url="https://api.sentiogate.app/v1",
+    base_url="https://api.sentiogate.dev/v1",
     api_key=os.environ["SENTIOGATE_API_KEY"]
 )
 ```
