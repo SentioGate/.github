@@ -2,7 +2,7 @@
 
 # ⚡ SentioGate
 
-### The Intelligent, Zero-Markup AI LLM Router & Unified Gateway
+### The Zero-Markup, OpenAI-Compatible LLM Router
 
 [![Website](https://img.shields.io/badge/Website-sentiogate.app-2563eb?style=for-the-badge&logo=google-chrome&logoColor=white)](https://sentiogate.app)
 [![Documentation](https://img.shields.io/badge/Docs-sentiogate.app%2Fdocs-059669?style=for-the-badge&logo=googledocs&logoColor=white)](https://sentiogate.app/docs)
@@ -11,16 +11,16 @@
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
 
 <p align="center">
-  <b>One OpenAI-compatible endpoint for every frontier model.</b><br/>
-  Intelligent latency routing, automatic multi-provider failover, and strict Bring-Your-Own-Key (BYOK) privacy — with <b>0% token markup</b>.
+  <b>One OpenAI-compatible endpoint for the models you already pay for.</b><br/>
+  Routing by cost, quality or latency with Bring-Your-Own-Key (BYOK) and <b>0% token markup</b>. SentioGate automatically falls back to another model if one fails.
 </p>
 
 ```
-Client App / SDK ───▶ [ SentioGate Intelligent Router ] ──┬──▶ OpenAI (GPT-4o)
-                              │                          ├──▶ Anthropic (Claude 3.5 Sonnet)
-                       ⚡ Latency & Cost Optimization    ├──▶ DeepSeek (V3 / R1)
-                       🛡️ Automatic Instant Failover      ├──▶ Google Gemini (Flash / Pro)
-                       🔒 BYOK (Keys Never Stored)       └──▶ Groq / Bedrock / Mistral
+Client App / SDK ───▶ [ SentioGate Router ] ──┬──▶ OpenAI
+                              │               ├──▶ Anthropic
+                   ⚡ Cost / quality / latency ├──▶ Google Gemini
+                   🛡️ Automatic fallback       ├──▶ DeepSeek
+                   🔒 Encrypted key Vault      └──▶ Groq / Mistral / xAI / ...
 ```
 
 </div>
@@ -29,10 +29,11 @@ Client App / SDK ───▶ [ SentioGate Intelligent Router ] ──┬──�
 
 ### 🚀 Why Developers Choose SentioGate
 
-1. **0% Token Markup**: Unlike conventional resale proxies that inflate model token rates, SentioGate operates on a pure Bring-Your-Own-Key (BYOK) infrastructure. You pay standard raw provider rates directly.
-2. **Sub-20ms Routing Overhead**: Ultra-fast heuristic and statistical health-based routing that selects the fastest available model replica or failover host.
-3. **Drop-in OpenAI Compatibility**: Works instantly with your existing code, LangChain, LlamaIndex, Vercel AI SDK, or Open-WebUI by switching just two lines (`baseURL` and `apiKey`).
-4. **Resilient Circuit Breaking**: Never let provider outages or HTTP 429 rate limits break your production applications. When OpenAI or Anthropic degrades, requests seamlessly cascade to alternate providers or fallback models in milliseconds.
+1. **0% Token Markup**: SentioGate is Bring-Your-Own-Key (BYOK). You pay your providers' standard rates directly; SentioGate adds no fee per token.
+2. **Routing you control**: send `model: "auto"` and choose `route_preference` `cost` (default), `quality` or `latency`, or pin a specific `provider/model`.
+3. **Drop-in OpenAI Compatibility**: works with the OpenAI SDK, LangChain and other OpenAI-compatible tools by changing the base URL and API key.
+4. **Automatic fallback**: SentioGate automatically falls back to another model if one fails, so a single provider outage or rate limit doesn't have to break your app.
+5. **Your keys stay yours**: provider keys are stored encrypted in your Vault, decrypted only in memory to call the provider, and shown back masked.
 
 ---
 
@@ -40,10 +41,10 @@ Client App / SDK ───▶ [ SentioGate Intelligent Router ] ──┬──�
 
 Explore our open-source developer libraries and resources:
 
-* **[sentiogate-js](https://github.com/SentioGate/sentiogate-js)** — Lightweight, zero-dependency TypeScript & Node.js client SDK. Supports streaming, retries, and token-budget constraints.
-* **[sentiogate-python](https://github.com/SentioGate/sentiogate-python)** — Pure standard-library Python SDK with synchronous and asynchronous streaming support.
-* **[llm-routing-benchmarks](https://github.com/SentioGate/llm-routing-benchmarks)** — Open benchmark suite measuring Time-To-First-Token (TTFT), failover latency, and throughput across 20+ models and inference providers.
-* **[Developer Hub & Playground](https://sentiogate.github.io)** — Interactive visualizer showing dynamic routing in action.
+* **[sentiogate-js](https://github.com/SentioGate/sentiogate-js)** — Lightweight, zero-dependency TypeScript & Node.js client SDK (`@sentiogate/sdk`). Supports streaming and opt-in retries.
+* **[sentiogate-python](https://github.com/SentioGate/sentiogate-python)** — Pure standard-library Python SDK (`sentiogate-python`) with streaming support.
+* **[llm-routing-benchmarks](https://github.com/SentioGate/llm-routing-benchmarks)** — Open benchmark scripts for measuring Time-To-First-Token (TTFT) and latency across providers.
+* **[Developer Hub & Playground](https://sentiogate.github.io)** — Interactive visualizer showing routing in action.
 
 ---
 
@@ -52,48 +53,45 @@ Explore our open-source developer libraries and resources:
 #### Python
 ```python
 import os
-from sentiogate import SentioGate
+from sentiogate import AutoRouterClient
 
-client = SentioGate(
-    api_key=os.environ["SENTIOGATE_API_KEY"],
-    # Optionally pass your provider keys directly (BYOK)
-    provider_keys={"openai": os.environ["OPENAI_API_KEY"]}
-)
+client = AutoRouterClient(api_key=os.environ["SENTIOGATE_API_KEY"])
 
-response = client.chat.completions.create(
-    model="auto:fastest",  # Automatically routes to lowest-latency model
+response = client.chat(
+    model="auto",  # SentioGate picks the model
     messages=[{"role": "user", "content": "Explain quantum computing in 10 words."}],
+    extra_body={"route_preference": "latency"},  # "cost" (default), "quality" or "latency"
 )
-print(response.choices[0].message.content)
+print(response["choices"][0]["message"]["content"])
 ```
 
 #### TypeScript / JavaScript
 ```typescript
-import { SentioGate } from "@sentiogate/sdk";
+import { AutoRouter } from "@sentiogate/sdk";
 
-const gate = new SentioGate({
-  apiKey: process.env.SENTIOGATE_API_KEY!,
+const router = new AutoRouter({
+  baseUrl: "https://api.sentiogate.dev",
+  apiKey: process.env.SENTIOGATE_API_KEY,
 });
 
-const completion = await gate.chat.completions.create({
-  model: "auto:cost-efficient", // Routes for optimal token efficiency
+for await (const chunk of router.streamChat({
+  model: "auto",
   messages: [{ role: "user", content: "Optimize this SQL query..." }],
-  stream: true,
-});
-
-for await (const chunk of completion) {
-  process.stdout.write(chunk.choices[0]?.delta?.content || "");
+  extraBody: { route_preference: "cost" },
+})) {
+  process.stdout.write(chunk.choices?.[0]?.delta?.content || "");
 }
 ```
 
 #### Drop-in OpenAI SDK Replacement
 ```python
+import os
 from openai import OpenAI
 
-# Zero code refactoring: just update base_url
+# Just update base_url and api_key
 client = OpenAI(
     base_url="https://api.sentiogate.dev/v1",
-    api_key=os.environ["SENTIOGATE_API_KEY"]
+    api_key=os.environ["SENTIOGATE_API_KEY"],
 )
 ```
 
@@ -101,7 +99,7 @@ client = OpenAI(
 
 ### 📊 Transparent Benchmarks & Data
 
-We believe in open metrics. View real-time provider latency, historical uptime, and comparative benchmarks:
+We believe in open metrics. View provider latency and comparative benchmarks:
 * 🌐 **Live Web Benchmarks:** [sentiogate.app/benchmarks](https://sentiogate.app/benchmarks)
 * 📈 **Benchmark Methodology & Code:** [SentioGate/llm-routing-benchmarks](https://github.com/SentioGate/llm-routing-benchmarks)
 * ⚖️ **Comparison Guide (SentioGate vs OpenRouter & LiteLLM):** [sentiogate.app/compare](https://sentiogate.app/compare)
