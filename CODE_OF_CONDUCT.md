@@ -36,7 +36,7 @@ This Code of Conduct applies within all community spaces, and also applies when 
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement at **[DECISION NEEDED: enforcement contact to be confirmed before publishing]**. Until a dedicated contact is set, report privately to the maintainers by opening a private advisory from the **Security** tab of any SentioGate repository (**Report a vulnerability**) and noting that it is a Code of Conduct report. All complaints will be reviewed and investigated promptly and fairly.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement privately through GitHub: open the **Security** tab of the relevant SentioGate repository and choose **Report a vulnerability**, or use [github.com/SentioGate/.github/security/advisories/new](https://github.com/SentioGate/.github/security/advisories/new) if no single repository is involved. Note in the report that it is a Code of Conduct report. These reports are visible only to you and the maintainers and are reviewed privately. All complaints will be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the reporter of any incident.
 
