@@ -43,7 +43,7 @@ Explore our open-source developer libraries and resources:
 
 * **[sentiogate-js](https://github.com/SentioGate/sentiogate-js)** — Lightweight, zero-dependency TypeScript & Node.js client SDK (`@sentiogate/sdk`). Supports streaming and opt-in retries.
 * **[sentiogate-python](https://github.com/SentioGate/sentiogate-python)** — Pure standard-library Python SDK (`sentiogate-python`) with streaming support.
-* **[llm-routing-benchmarks](https://github.com/SentioGate/llm-routing-benchmarks)** — Open benchmark scripts for measuring Time-To-First-Token (TTFT) and latency across providers.
+* **[llm-routing-benchmarks](https://github.com/SentioGate/llm-routing-benchmarks)** — Small offline synthetic benchmark demonstration; live metrics are on the benchmarks dashboard.
 * **[Developer Hub & Playground](https://sentiogate.github.io)** — Interactive visualizer showing routing in action.
 
 ---
